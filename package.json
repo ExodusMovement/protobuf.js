@@ -101,15 +101,9 @@
     "estraverse"
   ],
   "files": [
-    "index.js",
-    "index.d.ts",
-    "light.d.ts",
-    "light.js",
     "minimal.d.ts",
     "minimal.js",
     "tsconfig.json",
-    "ext/**",
-    "google/**",
     "src/**"
   ]
 }

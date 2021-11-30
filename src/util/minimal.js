@@ -413,9 +413,6 @@ util._configure = function() {
         function Buffer_from(value, encoding) {
             return new Buffer(value, encoding);
         };
-    util._Buffer_allocUnsafe = Buffer.allocUnsafe ||
-        /* istanbul ignore next */
-        function Buffer_allocUnsafe(size) {
-            return new Buffer(size);
-        };
+    // NOTE (Exodus): fixed Buffer.allocUnsafe -> Buffer.alloc, dropped support for very old Node.js versions
+    util._Buffer_allocUnsafe = Buffer.alloc
 };

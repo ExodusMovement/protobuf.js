@@ -1,6 +1,6 @@
 {
   "name": "@exodus/protobufjs",
-  "version": "6.11.1-exodus.0",
+  "version": "6.11.1-minimal-exodus.2",
   "versionScheme": "~",
   "description": "Protocol Buffers for JavaScript (& TypeScript).",
   "author": "Daniel Wirtz <dcode+protobufjs@dcode.io>",

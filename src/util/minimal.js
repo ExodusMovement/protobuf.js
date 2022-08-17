@@ -13,9 +13,6 @@ util.EventEmitter = require("@protobufjs/eventemitter");
 // float handling accross browsers
 util.float = require("@protobufjs/float");
 
-// requires modules optionally and hides the call from bundlers
-util.inquire = require("@protobufjs/inquire");
-
 // converts to / from utf8 encoded strings
 util.utf8 = require("@protobufjs/utf8");
 
@@ -41,10 +38,7 @@ util.isNode = Boolean(typeof global !== "undefined"
  * @memberof util
  * @type {Object}
  */
-util.global = util.isNode && global
-           || typeof window !== "undefined" && window
-           || typeof self   !== "undefined" && self
-           || this; // eslint-disable-line no-invalid-this
+util.global = globalThis; // eslint-disable-line no-invalid-this
 
 /**
  * An immuable empty array.
@@ -125,7 +119,8 @@ util.isSet = function isSet(obj, prop) {
  */
 util.Buffer = (function() {
     try {
-        var Buffer = util.inquire("buffer").Buffer;
+        // depends on global Buffer
+        if (typeof Buffer !== 'function') return null;
         // refuse to use non-node buffers if not explicitly assigned (perf reasons):
         return Buffer.prototype.utf8Write ? Buffer : /* istanbul ignore next */ null;
     } catch (e) {
@@ -177,9 +172,7 @@ util.Array = typeof Uint8Array !== "undefined" ? Uint8Array /* istanbul ignore n
  * Long.js's Long class if available.
  * @type {Constructor<Long>}
  */
-util.Long = /* istanbul ignore next */ util.global.dcodeIO && /* istanbul ignore next */ util.global.dcodeIO.Long
-         || /* istanbul ignore next */ util.global.Long
-         || util.inquire("long");
+util.Long = require("long");
 
 /**
  * Regular expression used to verify 2 bit (`bool`) map keys.
@@ -406,13 +399,8 @@ util._configure = function() {
         util._Buffer_from = util._Buffer_allocUnsafe = null;
         return;
     }
-    // because node 4.x buffers are incompatible & immutable
-    // see: https://github.com/dcodeIO/protobuf.js/pull/665
-    util._Buffer_from = Buffer.from !== Uint8Array.from && Buffer.from ||
-        /* istanbul ignore next */
-        function Buffer_from(value, encoding) {
-            return new Buffer(value, encoding);
-        };
+    // NOTE (Exodus): we don't support very old Node.js versions, hence Buffer.from is correct
+    util._Buffer_from = Buffer.from
     // NOTE (Exodus): fixed Buffer.allocUnsafe -> Buffer.alloc, dropped support for very old Node.js versions
     util._Buffer_allocUnsafe = Buffer.alloc
 };
